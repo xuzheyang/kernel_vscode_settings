@@ -151,7 +151,7 @@ def main():
 
 
 	architecture, full_compiler = parse_env()
-	with open(config_path, 'r') as config_file:
+	with open(config_path, 'r', encoding='utf-8') as config_file:
 		defines, includes = load_config(config_file)
 
 	for index in range(len(includes)):
@@ -162,7 +162,7 @@ def main():
 	includes.insert(0, "${workspaceFolder}/**")
 
 	if os.path.exists(settings_path):
-		with open(settings_path, 'r') as settings_file:
+		with open(settings_path, 'r', encoding='utf-8') as settings_file:
 			settings_json = json.load(settings_file)
 	elif args.project:
 		settings_json = {
@@ -195,8 +195,8 @@ def main():
 		settings_json["C_Cpp.default.compilerPath"] = full_compiler
 
 
-	with open(settings_path, 'w+') as settings_file:
-		json.dump(settings_json, settings_file, indent=4)
+	with open(settings_path, 'w+', encoding='utf-8') as settings_file:
+		json.dump(settings_json, settings_file, indent=4, ensure_ascii=False)
 		settings_file.write('\n')
 		print("Settings saved to", settings_path)
 
