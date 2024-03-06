@@ -16,6 +16,7 @@ import os
 import sys
 import json
 import argparse
+import platform
 
 
 def load_config(config_file):
@@ -62,7 +63,7 @@ def parse_arguments():
 	parser.add_argument("-l", "--local", help="convert to vscode settings.json", action="store_true")
 
 	parser.add_argument("kernel", help="kernel source directory")
-	parser.add_argument("project_directory", help="project top-level directory")
+	parser.add_argument("project_directory", help="project top-level directory", nargs='?', default=None)
 	args = parser.parse_args()
 	if not args.kernel:
 		parser.error("kernel source directory is required")
@@ -89,15 +90,15 @@ def parse_arguments():
 def parse_env():
 	architecture = os.environ.get('ARCH')
 	if not architecture:
-		print("ARCH environment variable not set")
-		raise SystemExit
+		machine_type = platform.machine()
+		if "aarch64" in machine_type:
+			machine_type = "arm64"
+		architecture = machine_type
 
 	cross_compile = os.environ.get('CROSS_COMPILE')
 	if not cross_compile:
-		print("CROSS_COMPILE environment variable not set")
-		raise SystemExit
-
-	if cross_compile.endswith('-'):
+		compiler = 'gcc'
+	elif cross_compile.endswith('-'):
 		compiler = cross_compile + 'gcc'
 
 	full_compiler = ''
